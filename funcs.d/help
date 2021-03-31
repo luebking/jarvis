@@ -1,0 +1,43 @@
+#!/bin/sh
+
+jarvis_wiki() {
+    WLC="$1"; shift
+    TTL="$1"; shift
+    jarvis_resize 48
+    wikicurses -w $WLC "$*"
+    jarvis_resize
+}
+
+explain() {
+    jarvis_wiki en Wikipedia "$*"
+}
+
+help() {
+    if [ -z "$1" ]; then
+        less /usr/share/jarvis/README.md
+    else
+        jarvis_wiki arch Archipedia "$*"
+    fi
+}
+
+dict() {
+    jarvis_resize 16
+    case "$1" in
+        "en")
+            shift
+            /usr/bin/dict -d fd-deu-eng "${@}" 2>&1 | jarvis_less
+        ;;
+        "de")
+            shift
+            /usr/bin/dict -d fd-eng-deu "${@}" 2>&1 | jarvis_less
+        ;;
+        "fr")
+            shift
+            /usr/bin/dict -d fd-deu-fra "${@}" 2>&1 | jarvis_less
+        ;;
+        *)
+            /usr/bin/dict "$@" 2>&1 | jarvis_less
+        ;;
+    esac
+    jarvis_resize
+}

@@ -1,0 +1,21 @@
+
+# J.A.R.V.I.S config
+# it's sourced last, so you can abuse it to override keybindings or aliases
+
+# font: -fn parameter for urxvt
+JARVIS_FONT="xft:SourceCodePro-9"
+
+# pos: -geometry tail for urxvt, notice the "+" prefix!
+JARVIS_POS="+100+48"
+
+# colors, fore- and background for night and day.
+# Defaults to day if you don't have redshift
+JARVIS_FG_DAY='#272727'
+JARVIS_BG_DAY='#fafafa'
+JARVIS_FG_NIGHT='#fafafa'
+JARVIS_BG_NIGHT='#272727'
+
+# background pixmap for urxvt
+# see the urxvt manpage and ensure your copy is compiled w/ pixbuf enabled!
+JARVIS_BACKDROP_DAY="/usr/share/jarvis/day.png;style=centered"
+JARVIS_BACKDROP_NIGHT="/usr/share/jarvis/night.png;style=centered"

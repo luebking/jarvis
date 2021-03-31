@@ -1,0 +1,14 @@
+#!/bin/sh
+
+mc() {
+    jarvis_resize 32 128
+    /usr/bin/mc "$@"
+    jarvis_resize
+}
+
+
+locate() {
+    jarvis_resize 32
+    /usr/bin/locate -i '*'"$*"'*' | jarvis_less
+    jarvis_resize
+}

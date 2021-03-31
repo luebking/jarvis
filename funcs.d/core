@@ -1,0 +1,127 @@
+#!/bin/sh
+
+command -v jarvis_less >/dev/null 2>&1 ||
+alias jarvis_less="/usr/bin/less -S -J -w --mouse --rscroll … -Ps'Press q to exit'"
+
+#cal() {
+#    jarvis_resize 8
+#    /usr/bin/cal -mw1 --color=always | sed '1s/\(.*\)/\x1b\[1;31m\1\x1b\[0m/; 2s/\(.*\)/\x1b\[0;32m\1\x1b\[0m/;  s/\x1b\[7m/\x1b\[1;31m/g; s/\x1b\[27m/\x1b\[0m/g; /^\s*$/d; 3,\$s/^\( \{0,1\}[^ ]* \)/\x1b\[0;32m\1\x1b\[0m/g'
+#    read -q
+#    jarvis_resize
+#}
+
+less() {
+    printf "\x1B[8;48;100t"
+    # jarvis_resize 48
+    # jarvis_resize clear's what screws the redirection and is not required
+    # since less uses the alternative buffer
+    if [ -n "$1" -a ! -r "$1" ]; then
+        sudo /usr/bin/less -J -w --mouse --rscroll … -Ps'Press q to exit' -N -f -- "${1}"
+    else
+        jarvis_less -N -f -- "${1:-/dev/stdin}"
+    fi
+    jarvis_resize
+}
+
+edit() {
+    jarvis_resize 48
+    CANARY="$1"
+    [ -e "$CANARY" ] || CANARY="$(dirname "$CANARY")"
+    if [ -w "$CANARY" ]; then
+        vim -p "$@"
+    else
+        sudoedit "$1"
+    fi
+    jarvis_resize
+}
+
+stat() {
+    jarvis_resize 9
+    /usr/bin/stat "$@" | jarvis_less
+    jarvis_resize
+}
+
+man() {
+    jarvis_resize 48
+    /usr/bin/man $@
+    if [ ! "$?" = "0" ]; then
+        printf "\x1B[8;3;100t"
+        sleep 2
+    fi
+    jarvis_resize
+}
+
+top() {
+    jarvis_resize 24
+    /usr/bin/top
+    jarvis_resize
+}
+
+systemctl() {
+    case "$1" in
+    "list"*|"status"|"show"|"cat"|*"help")
+    jarvis_resize 24
+    SYSTEMD_COLORS=true /usr/bin/systemctl --no-pager "$@" | jarvis_less -r
+    jarvis_resize
+    ;;
+    "get"*|"is-"*)
+    jarvis_resize 2
+    SYSTEMD_COLORS=true /usr/bin/systemctl --no-pager "$@" | jarvis_less -r
+    jarvis_resize
+    ;;
+    *)
+    jarvis_resize 3
+    sudo /usr/bin/systemctl "$@"
+    jarvis_resize
+    ;;
+    esac
+}
+
+pacman() {
+    case "$1" in
+    '-h'|'--help')
+        jarvis_resize 16
+        /usr/bin/pacman --color=always "$@" | jarvis_less -r
+        jarvis_resize
+    ;;
+    '-V'|'--version')
+        jarvis_resize 8
+        /usr/bin/pacman --color=always "$@" | jarvis_less -r
+        jarvis_resize
+    ;;
+    '-Q'*|'-query'|'-F'*|'--files')
+        jarvis_resize 24
+        /usr/bin/pacman --color=always "$@" | jarvis_less -r
+        jarvis_resize
+    ;;
+    '-R'*|'--remove'|'-S'*|'--sync'|'-U'*|'--upgrade'|*)
+        jarvis_resize 16
+        /usr/bin/pacman "$@"
+        read -q
+        jarvis_resize
+    ;;
+    *)
+    # see above
+    # pacman {-D --database} <Optionen> <Paket(e)>
+    # pacman {-T --deptest}  [Optionen] [Paket(e)]
+    esac
+}
+
+_launch() {
+    IFS=$'\n'
+    SERVICES=($(find $HOME/.local/share/applications /usr/local/share/applications \
+                     /usr/share/applications -name '*.desktop' -exec basename {} .desktop \;))
+    unset IFS
+    compadd "${SERVICES[@]}"
+}
+
+launch() {
+    SERVICE="$(find $HOME/.local/share/applications /usr/local/share/applications \
+                     /usr/share/applications -iname "$1.desktop" | head -1)"
+    [ -z "$SERVICE" ] && echo "No such service: $1" && return
+    shift
+    SERVICE=($(sed '/^Exec=/!d;s///;s/ %.//;q' "$SERVICE"))
+    nohup ${SERVICE[@]} "$@" > /dev/null 2>&1 & disown
+}
+
+compdef _launch launch

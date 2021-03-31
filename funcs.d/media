@@ -1,0 +1,7 @@
+#!/bin/sh
+
+alsamixer() {
+    jarvis_resize 16 128
+    /usr/bin/alsamixer
+    jarvis_resize
+}

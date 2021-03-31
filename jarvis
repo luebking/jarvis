@@ -1,0 +1,21 @@
+#!/bin/sh
+
+JARVIS_FONT="xft:SourceCodePro-9"
+JARVIS_POS="+100+48"
+
+[ -r $HOME/.config/jarvis ] && . $HOME/.config/jarvis
+
+JARVIS_WID="$(xdotool search --limit 1 --classname JARVIS)"
+if [ -z $JARVIS_WID ]; then
+    env ZNOTDIR="$ZDOTDIR" ZDOTDIR=/usr/share/jarvis JARVIS=true urxvt -name JARVIS -fn "$JARVIS_FONT" -geometry 100x1${JARVIS_POS} -override-redirect -pixmap "" &
+    disown
+    sleep 0.5
+    xdotool search --onlyvisible --classname JARVIS windowfocus '%1' mousemove --window '%1' 50 16 >/dev/null 2>&1
+    exit
+fi
+
+if [ $(xdotool getwindowfocus) = $JARVIS_WID ]; then
+    xdotool windowunmap $JARVIS_WID >/dev/null 2>&1
+else
+    xdotool windowmap --sync $JARVIS_WID windowfocus $JARVIS_WID mousemove --window $JARVIS_WID 50 16 >/dev/null 2>&1
+fi

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+dig() {
+    jarvis_resize 24
+    /usr/bin/dig "$@" | jarvis_less
+    jarvis_resize
+}
+
+drill() {
+    jarvis_resize 24
+    /usr/bin/drill "$@" | jarvis_less
+    jarvis_resize
+}
+
+ping() {
+    jarvis_resize 8
+    /usr/bin/ping "$@"
+    jarvis_resize
+}
+
+nmap() {
+    jarvis_resize 16
+    /usr/bin/nmap "$@" | jarvis_less
+    jarvis_resize
+}
