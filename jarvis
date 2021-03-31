@@ -7,7 +7,7 @@ JARVIS_POS="+100+48"
 
 JARVIS_WID="$(xdotool search --limit 1 --classname JARVIS)"
 if [ -z $JARVIS_WID ]; then
-    env ZNOTDIR="$ZDOTDIR" ZDOTDIR=/usr/share/jarvis JARVIS=true urxvt -name JARVIS -fn "$JARVIS_FONT" -geometry 100x1${JARVIS_POS} -override-redirect -pixmap "" &
+    env ZNOTDIR="$ZDOTDIR" ZDOTDIR=/usr/share/jarvis JARVIS=true urxvt +sb -sk -name JARVIS -fn "$JARVIS_FONT" -geometry 100x1${JARVIS_POS} -override-redirect -pixmap "" &
     disown
     sleep 0.5
     xdotool search --onlyvisible --classname JARVIS windowfocus '%1' mousemove --window '%1' 50 16 >/dev/null 2>&1
