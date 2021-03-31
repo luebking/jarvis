@@ -22,12 +22,6 @@ function zle_jarvisgrowxpand {
 zle -N zle_jarvisgrowxpand
 bindkey '\t' zle_jarvisgrowxpand
 
-TRAPINT() {
-    printf '\x1B[8;1;100t'
-    return 1
-}
-
-
 JARVIS_IS_BIG=false
 function zle_jarvisbig {
     if $JARVIS_IS_BIG; then
@@ -41,6 +35,11 @@ function zle_jarvisbig {
 
 zle -N zle_jarvisbig
 bindkey '^[[23~' zle_jarvisbig # F11
+
+TRAPINT() {
+    $JARVIS_IS_BIG || printf '\x1B[8;1;100t'
+    return 1
+}
 
 if [ -z "$JARVIS_AUTOHIDES" ]; then
     xdotool behave $WINDOWID blur exec --sync sh -c \
