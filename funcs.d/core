@@ -3,12 +3,20 @@
 command -v jarvis_less >/dev/null 2>&1 ||
 alias jarvis_less="/usr/bin/less -S -J -w --rscroll … -Ps'Press q to exit'"
 
-#cal() {
-#    jarvis_resize 8
-#    /usr/bin/cal -mw1 --color=always | sed '1s/\(.*\)/\x1b\[1;31m\1\x1b\[0m/; 2s/\(.*\)/\x1b\[0;32m\1\x1b\[0m/;  s/\x1b\[7m/\x1b\[1;31m/g; s/\x1b\[27m/\x1b\[0m/g; /^\s*$/d; 3,\$s/^\( \{0,1\}[^ ]* \)/\x1b\[0;32m\1\x1b\[0m/g'
-#    read -q
-#    jarvis_resize
-#}
+cal() {
+    if (($#)); then
+        /usr/bin/cal "$@"
+    else
+        jarvis_resize 9
+        /usr/bin/cal -mw3 --color=always | sed '1s/\(.*\)/\x1b\[1;31m\1\x1b\[0m/;
+                                                2s/\(.*\)/\x1b\[0;32m\1\x1b\[0m/;
+                                                s/\x1b\[7m/\x1b\[1;31m/g;
+                                                s/\x1b\[27m/\x1b\[0m/g; /^\s*$/d;
+                                                3,$s/^\(..\)\(.\{23\}\)\(..\)\(.\{23\}\)\(..\)/\x1b\[0;32m\1\x1b\[0m\2\x1b\[0;32m\3\x1b\[0m\4\x1b\[0;32m\5\x1b\[0m/g'
+        read -q
+        jarvis_resize
+    fi
+}
 
 less() {
     printf "\x1B[8;48;100t"
