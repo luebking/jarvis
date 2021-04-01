@@ -15,13 +15,6 @@ printf '\x1b[\x35 q'
 
 # window control ============================
 
-function zle_jarvisgrowxpand {
-    zle expand-or-complete || printf '\x1B[8;8;100t'
-}
-
-zle -N zle_jarvisgrowxpand
-bindkey '\t' zle_jarvisgrowxpand
-
 JARVIS_IS_BIG=false
 function zle_jarvisbig {
     if $JARVIS_IS_BIG; then
@@ -35,6 +28,13 @@ function zle_jarvisbig {
 
 zle -N zle_jarvisbig
 bindkey '^[[23~' zle_jarvisbig # F11
+
+function zle_jarvisgrowxpand {
+    zle expand-or-complete || $JARVIS_IS_BIG || printf '\x1B[8;8;100t'
+}
+
+zle -N zle_jarvisgrowxpand
+bindkey '\t' zle_jarvisgrowxpand
 
 TRAPINT() {
     $JARVIS_IS_BIG || printf '\x1B[8;1;100t'
