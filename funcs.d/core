@@ -115,6 +115,18 @@ pacman() {
     esac
 }
 
+systool() {
+    jarvis_resize 32
+    /usr/bin/systool "$@" | jarvis_less
+    jarvis_resize
+}
+
+modinfo() {
+    jarvis_resize 48
+    /usr/bin/modinfo "$@" | jarvis_less
+    jarvis_resize
+}
+
 _launch() {
     IFS=$'\n'
     SERVICES=($(find $HOME/.local/share/applications /usr/local/share/applications \
