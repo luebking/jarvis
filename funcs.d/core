@@ -1,7 +1,7 @@
 #!/bin/sh
 
 command -v jarvis_less >/dev/null 2>&1 ||
-alias jarvis_less="/usr/bin/less -S -J -w --mouse --rscroll … -Ps'Press q to exit'"
+alias jarvis_less="/usr/bin/less -S -J -w --rscroll … -Ps'Press q to exit'"
 
 #cal() {
 #    jarvis_resize 8
@@ -16,7 +16,7 @@ less() {
     # jarvis_resize clear's what screws the redirection and is not required
     # since less uses the alternative buffer
     if [ -n "$1" -a ! -r "$1" ]; then
-        sudo /usr/bin/less -J -w --mouse --rscroll … -Ps'Press q to exit' -N -f -- "${1}"
+        sudo /usr/bin/less -J -w --rscroll … -Ps'Press q to exit' -N -f -- "${1}"
     else
         jarvis_less -N -f -- "${1:-/dev/stdin}"
     fi
