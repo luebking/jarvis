@@ -53,6 +53,7 @@ fi
 export JARVIS_AUTOHIDES=true
 
 jarvis_resize() {
+    JARVIS_IS_BIG=false
     printf "\x1B[8;${1:-1};${2:-100}t"
     clear
 }
