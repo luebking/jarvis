@@ -32,7 +32,7 @@ edit() {
 
 fsck() {
     jarvis_resize 8
-    sudo fsck "$@"
+    sudo /usr/bin/fsck "$@"
     sleep 2
     jarvis_resize
 }
