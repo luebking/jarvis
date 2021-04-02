@@ -30,6 +30,13 @@ edit() {
     jarvis_resize
 }
 
+fsck() {
+    jarvis_resize 8
+    sudo fsck "$@"
+    sleep 2
+    jarvis_resize
+}
+
 _launch() {
     IFS=$'\n'
     SERVICES=($(find $HOME/.local/share/applications /usr/local/share/applications \
