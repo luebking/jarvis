@@ -1,5 +1,6 @@
 
 ZDOTDIR="$ZNOTDIR"
+DIRSTACKFILE=/tmp/.jarvis.dirstack.$USER
 
 # source the users $HOME/.zsh{stuff}
 [ -r "${ZDOTDIR:-$HOME}/.zshenv" ] && . "${ZDOTDIR:-$HOME}/.zshenv"
