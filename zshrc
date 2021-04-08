@@ -1,5 +1,6 @@
 
 ZDOTDIR="$ZNOTDIR"
+unset ZNOTDIR
 DIRSTACKFILE=/tmp/.jarvis.dirstack.$USER
 
 # source the users $HOME/.zsh{stuff}
