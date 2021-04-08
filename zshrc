@@ -59,6 +59,22 @@ if [ -z "$JARVIS_AUTOHIDES" ]; then
 fi
 export JARVIS_AUTOHIDES=true
 
+jarvis_auto_resize() {
+    $JARVIS_IS_BIG && return
+    JARVIS_LINES=$(wc -l)
+    if ((JARVIS_LINES > 46)); then
+        JARVIS_LINES=48
+    else
+        ((JARVIS_LINES+=2))
+    fi
+    printf "\x1B[8;${JARVIS_LINES};100t"
+    printf '\e[1;30;47m Press any key … \e[0m'
+    read -q
+    printf "\x1B[8;1;100t"
+}
+
+alias autosize="tee >(jarvis_auto_resize)"
+
 jarvis_resize() {
     JARVIS_IS_BIG=false
     printf "\x1B[8;${1:-1};${2:-100}t"
