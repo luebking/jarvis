@@ -1,5 +1,9 @@
 
-ZDOTDIR="$ZNOTDIR"
+if [ -z "$ZNOTDIR" ]; then
+    unset ZDOTDIR
+else
+    ZDOTDIR="$ZNOTDIR"
+fi
 unset ZNOTDIR
 DIRSTACKFILE=/tmp/.jarvis.dirstack.$USER
 
