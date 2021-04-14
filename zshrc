@@ -15,6 +15,16 @@ HISTFILE=~/.zsh.jarvis_history
 # blinking beam cursor
 printf '\x1b[\x35 q'
 
+
+function zle_jarvis_auto_disown {
+    [[ -z $BUFFER ]] && return
+    BUFFER+=" & disown"
+    zle accept-line
+}
+
+zle -N zle_jarvis_auto_disown
+bindkey '^[^M' zle_jarvis_auto_disown # Alt+Enter
+
 # window control ============================
 
 JARVIS_IS_BIG=false
