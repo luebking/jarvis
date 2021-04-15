@@ -33,7 +33,7 @@ edit() {
 fsck() {
     jarvis_resize 8
     sudo /usr/bin/fsck "$@"
-    sleep 2
+    read -q -t10
     jarvis_resize
 }
 
@@ -75,7 +75,7 @@ man() {
     /usr/bin/man $@
     if [ ! "$?" = "0" ]; then
         printf "\x1B[8;3;100t"
-        sleep 2
+        read -q -t4
     fi
     jarvis_resize
 }
