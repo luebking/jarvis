@@ -15,19 +15,11 @@ DIRSTACKFILE=/tmp/.jarvis.dirstack.$USER
 unset JARVIS
 
 HISTFILE=~/.zsh.jarvis_history
+setopt HIST_IGNORE_SPACE
 
 # blinking beam cursor
 printf '\x1b[\x35 q'
 
-
-function zle_jarvis_auto_disown {
-    [[ -z $BUFFER ]] && return
-    BUFFER+=" & disown"
-    zle accept-line
-}
-
-zle -N zle_jarvis_auto_disown
-bindkey '^[^M' zle_jarvis_auto_disown # Alt+Enter
 
 # window control ============================
 
@@ -84,7 +76,7 @@ jarvis_auto_resize() {
     fi
     printf "\x1B[8;${JARVIS_LINES};100t"
     printf '\e[1;30;47m Press any key … \e[0m'
-    read -q
+    read -q -t10
     printf "\x1B[8;1;100t"
 }
 
@@ -150,6 +142,19 @@ fi
 TRAPALRM() {
     jarvis_daylight
 }
+
+function zle_jarvis_auto_disown {
+    [[ -z $BUFFER ]] && return
+    if [ ${BUFFER[1]} = "=" ]; then
+        BUFFER=" printf \"${BUFFER:1}\"' = %s' \"$(echo ${BUFFER:1} | bc -l)\"; read -q -t10"
+    else
+        BUFFER+=" & disown"
+    fi
+    zle accept-line
+}
+
+zle -N zle_jarvis_auto_disown
+bindkey '^[^M' zle_jarvis_auto_disown # Alt+Enter
 
 
 if [ -d $HOME/.local/share/jarvis/funcs.d ] ; then
