@@ -145,12 +145,14 @@ TRAPALRM() {
 
 function zle_jarvis_auto_disown {
     [[ -z $BUFFER ]] && return
+    ORIG_BUFFER="$BUFFER"
     if [ ${BUFFER[1]} = "=" ]; then
         BUFFER=" printf \"${BUFFER:1}\"' = %s' \"$(echo ${BUFFER:1} | bc -l)\"; read -q -t10"
     else
-        BUFFER+=" & disown"
+        BUFFER=" $BUFFER & disown"
     fi
     zle accept-line
+    print -s "$ORIG_BUFFER"
 }
 
 zle -N zle_jarvis_auto_disown
