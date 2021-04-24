@@ -24,6 +24,7 @@ printf '\x1b[\x35 q'
 # window control ============================
 
 JARVIS_IS_BIG=false
+JARVIS_IS_BIGGER=false
 JARVIS_EXPANDING=false
 function zle_jarvisbig {
     if $JARVIS_IS_BIG; then
@@ -33,10 +34,25 @@ function zle_jarvisbig {
         printf '\x1B[8;32;100t'
         JARVIS_IS_BIG=true
     fi
+    JARVIS_IS_BIGGER=false
 }
 
 zle -N zle_jarvisbig
 bindkey '^[[23~' zle_jarvisbig # F11
+
+function zle_jarvisbigger {
+    if $JARVIS_IS_BIG && ! $JARVIS_IS_BIGGER; then
+        printf '\x1B[8;48;164t'
+        JARVIS_IS_BIGGER=true
+    else
+        printf '\x1B[8;8;164t'
+        JARVIS_IS_BIGGER=false
+        JARVIS_IS_BIG=true
+    fi
+}
+zle -N zle_jarvisbigger
+bindkey '^[[23;5~' zle_jarvisbigger # Ctrl+F11
+
 
 function zle_jarvisgrowxpand {
     zle expand-or-complete || $JARVIS_IS_BIG || JARVIS_EXPANDING=true
