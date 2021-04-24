@@ -2,12 +2,20 @@
 
 JARVIS_FONT="xft:SourceCodePro-9"
 JARVIS_POS="+100+48"
+JARVIS_WIDTH=100
+JARVIS_HEIGHT=1
 
 [ -r $HOME/.config/jarvis ] && . $HOME/.config/jarvis
 
+
+if [ "$1" = "quake" ]; then
+    JARVIS_WIDTH=164
+    JARVIS_HEIGHT=8
+fi
+
 JARVIS_WID="$(xdotool search --limit 1 --classname JARVIS)"
 if [ -z $JARVIS_WID ]; then
-    env ZNOTDIR="$ZDOTDIR" ZDOTDIR=/usr/share/jarvis JARVIS=true urxvt +sb -sk -name JARVIS -fn "$JARVIS_FONT" -geometry 100x1${JARVIS_POS} -override-redirect -pixmap "" "${JARVIS_URXVT[@]}" &
+    env ZNOTDIR="$ZDOTDIR" ZDOTDIR=/usr/share/jarvis JARVIS=true urxvt +sb -sk -name JARVIS -fn "$JARVIS_FONT" -geometry ${JARVIS_WIDTH}x${JARVIS_HEIGHT}${JARVIS_POS} -override-redirect -pixmap "" "${JARVIS_URXVT[@]}" &
     disown
     sleep 0.5
     xdotool search --onlyvisible --classname JARVIS windowfocus '%1' windowraise '%1' mousemove --window '%1' 50 16 >/dev/null 2>&1
@@ -17,5 +25,6 @@ fi
 if [ $(xdotool getwindowfocus) = $JARVIS_WID ]; then
     xdotool windowunmap $JARVIS_WID >/dev/null 2>&1
 else
+    [ "$1" = "quake" ] && xdotool windowsize --usehints $JARVIS_WID $JARVIS_WIDTH $JARVIS_HEIGHT
     xdotool windowmap --sync $JARVIS_WID windowraise $JARVIS_WID windowfocus $JARVIS_WID mousemove --window $JARVIS_WID 50 16 >/dev/null 2>&1
 fi
