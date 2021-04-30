@@ -104,6 +104,34 @@ jarvis_resize() {
     clear
 }
 
+jarvis_place() {
+    # get screen geometry
+    read SW SH SX SY < <(xrandr --current | sed '/ connected/!d; / primary/!d; s/.* \([0-9]*[^ ]*x[^ ]*+[^ ]*+[^ ]*\) .*/\1/; s%/[0-9]*%%g; s/[^0-9]/ /g')
+    if ((SW < 1)); then
+        read SW SH SX SY < <(xrandr --current | sed '/ connected/!d; s/.* \([0-9]*[^ ]*x[^ ]*+[^ ]*+[^ ]*\) .*/\1/; s%/[0-9]*%%g; s/[^0-9]/ /g')
+    fi
+    
+    # get geometry
+    eval $(xdotool getwindowgeometry --prefix JARVIS_GEO_ --shell $WINDOWID)
+    
+    # assume absolute position
+    JARVIS_GEO_X=$1
+    JARVIS_GEO_Y=$2
+    
+    # fix above assumption, allows "jarvis_place . 64" to only move the vertical
+    [[ "$1" =~ "^[0-9]+$" ]] || JARVIS_GEO_X=$(((SX+SW-JARVIS_GEO_WIDTH)/2))
+    [[ "$2" =~ "^[0-9]+$" ]] || JARVIS_GEO_Y=$(((SY+SH-JARVIS_GEO_HEIGHT)/2))
+    
+    # apply location parameter
+    [[ "$1" =~ "top" ]] && JARVIS_GEO_Y=48
+    [[ "$1" =~ "left" ]] && JARVIS_GEO_X=48
+    [[ "$1" =~ "bottom" ]] && JARVIS_GEO_Y=$((SY+SH - JARVIS_GEO_HEIGHT - 48))
+    [[ "$1" =~ "right" ]] && JARVIS_GEO_X=$((SX+SW - JARVIS_GEO_WIDTH - 48))
+    
+    # MOVE!
+    xdotool windowmove $WINDOWID $JARVIS_GEO_X $JARVIS_GEO_Y
+}
+
 JARVIS_FG_DAY='#272727'
 JARVIS_BG_DAY='#fafafa'
 JARVIS_FG_NIGHT='#fafafa'
@@ -165,7 +193,7 @@ function zle_jarvis_auto_disown {
     if [ ${BUFFER[1]} = "=" ]; then
         BUFFER=" printf \"${BUFFER:1}\"' = %s' \"$(echo ${BUFFER:1} | bc -l)\"; read -q -t10"
     else
-        BUFFER=" $BUFFER & disown"
+        BUFFER=" $BUFFER > /dev/null 2>&1 & disown"
     fi
     zle accept-line
     print -s "$ORIG_BUFFER"
