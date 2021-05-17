@@ -8,9 +8,21 @@ JARVIS_HEIGHT=1
 [ -r $HOME/.config/jarvis ] && . $HOME/.config/jarvis
 
 
-if [ "$1" = "quake" ]; then
+JARVIS_RESIZE=false
+if [[ " $@ " =~ " quake " ]]; then
     JARVIS_WIDTH=164
     JARVIS_HEIGHT=8
+    JARVIS_RESIZE=true
+fi
+if [[ " $@ " =~ " full " ]]; then
+    JARVIS_HEIGHT=32
+    [[ " $@ " =~ " quake " ]] && JARVIS_HEIGHT=48
+    JARVIS_RESIZE=true
+fi
+if [[ " $@ " =~ " line " ]]; then
+#    JARVIS_WIDTH=100
+#    JARVIS_HEIGHT=1
+    JARVIS_RESIZE=true
 fi
 
 JARVIS_WID="$(xdotool search --limit 1 --classname JARVIS)"
@@ -25,6 +37,6 @@ fi
 if [ $(xdotool getwindowfocus) = $JARVIS_WID ]; then
     xdotool windowunmap $JARVIS_WID >/dev/null 2>&1
 else
-    [ "$1" = "quake" ] && xdotool windowsize --usehints $JARVIS_WID $JARVIS_WIDTH $JARVIS_HEIGHT
+    $JARVIS_RESIZE && xdotool windowsize --usehints $JARVIS_WID $JARVIS_WIDTH $JARVIS_HEIGHT
     xdotool windowmap --sync $JARVIS_WID windowraise $JARVIS_WID windowfocus $JARVIS_WID mousemove --window $JARVIS_WID 50 16 >/dev/null 2>&1
 fi
