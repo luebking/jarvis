@@ -67,7 +67,10 @@ TRAPINT() {
     return 1
 }
 
+
+JARVIS_INTERACT=0
 preexec() {
+    JARVIS_INTERACT=$(date +%s)
     $JARVIS_EXPANDING && printf '\x1B[8;1;100t' && JARVIS_EXPANDING=false
 }
 
@@ -100,8 +103,8 @@ alias autosize="tee >(jarvis_auto_resize)"
 
 jarvis_resize() {
     JARVIS_IS_BIG=false
-    printf "\x1B[8;${1:-1};${2:-100}t"
     clear
+    printf "\x1B[8;${1:-1};${2:-100}t"
 }
 
 jarvis_place() {
@@ -179,11 +182,13 @@ jarvis_daylight() {
     fi
 }
 
-if command -v redshift >/dev/null 2>&1; then
-    TMOUT=3600
-fi
+TMOUT=600
 
 TRAPALRM() {
+    if $JARVIS_IS_BIG; then
+        TIME=$(date +%s)
+        (( TIME - JARVIS_INTERACT > 300 )) && jarvis_resize
+    fi
     jarvis_daylight
 }
 
