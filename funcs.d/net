@@ -15,6 +15,7 @@ drill() {
 ping() {
     jarvis_resize 8
     /usr/bin/ping "$@"
+    [[ " $* " =~ " -c" ]] && echo "=================" && read -q -t10
     jarvis_resize
 }
 
