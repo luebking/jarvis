@@ -26,6 +26,7 @@ printf '\x1b[\x35 q'
 JARVIS_IS_BIG=false
 JARVIS_IS_BIGGER=false
 JARVIS_EXPANDING=false
+JARVIS_POS=center
 function zle_jarvisbig {
     if $JARVIS_IS_BIG; then
         printf '\x1B[8;1;100t'
@@ -35,6 +36,7 @@ function zle_jarvisbig {
         JARVIS_IS_BIG=true
     fi
     JARVIS_IS_BIGGER=false
+    jarvis_place $JARVIS_POS
 }
 
 zle -N zle_jarvisbig
@@ -71,7 +73,12 @@ TRAPINT() {
 JARVIS_INTERACT=0
 preexec() {
     JARVIS_INTERACT=$(date +%s)
-    $JARVIS_EXPANDING && printf '\x1B[8;1;100t' && JARVIS_EXPANDING=false
+    JARVIS_EXPANDING=false
+    $JARVIS_IS_BIG && return
+    local HEIGHT=1
+    [[ "$3" =~ " -*help" ]] && HEIGHT=16
+    [[ "$3" =~ "^ls " ]] && HEIGHT=24
+    printf "\x1B[8;${HEIGHT};100t"
 }
 
 if [ -z "$JARVIS_AUTOHIDES" ]; then
@@ -108,6 +115,7 @@ jarvis_resize() {
 }
 
 jarvis_place() {
+    JARVIS_POS=$1
     # get screen geometry
     read SW SH SX SY < <(xrandr --current | sed '/ connected/!d; / primary/!d; s/.* \([0-9]*[^ ]*x[^ ]*+[^ ]*+[^ ]*\) .*/\1/; s%/[0-9]*%%g; s/[^0-9]/ /g')
     if ((SW < 1)); then
